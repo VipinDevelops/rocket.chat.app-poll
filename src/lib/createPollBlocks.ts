@@ -152,7 +152,7 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
 
     block.addContextBlock({
         elements: [
-            block.newMarkdownTextObject(`*${poll.totalVotes}* total votes *${getUniqueVoters(poll)}* user voted ${poll.finished ? '| Final Results' : ''}`),
+            block.newMarkdownTextObject(`*${poll.totalVotes}* total votes *${getUniqueVoters(poll)}* users voted ${poll.finished ? '| Final Results' : ''}`),
         ],
     });
 
