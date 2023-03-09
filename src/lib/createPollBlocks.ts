@@ -4,6 +4,17 @@ import { IPoll, pollVisibility } from '../definition';
 import { buildVoteGraph } from './buildVoteGraph';
 import { buildVoters } from './buildVoters';
 
+//function to calculate total voters 
+function getUniqueVoters(poll: IPoll): number {
+    const uniqueVoters = new Set();
+    poll.votes.forEach((vote) => {
+        vote.voters.forEach((voter) => {
+            uniqueVoters.add(voter.id);
+        });
+    });
+    return uniqueVoters.size;
+}
+
 export function createPollBlocks(block: BlockBuilder, question: string, options: Array<any>, poll: IPoll, showNames: boolean, timeZone: string, anonymousOptions: Array<string>, wordCloud: boolean) {
     block.addSectionBlock({
         text: block.newPlainTextObject(question),
@@ -141,7 +152,7 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
 
     block.addContextBlock({
         elements: [
-            block.newMarkdownTextObject(`${ poll.totalVotes } votes ${ poll.finished ? '| Final Results' : '' }`),
+            block.newMarkdownTextObject(`*${poll.totalVotes}* total votes | *${getUniqueVoters(poll)}* users voted ${poll.finished ? '| Final Results' : ''}`),
         ],
     });
 }
