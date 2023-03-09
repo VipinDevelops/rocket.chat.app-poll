@@ -1,4 +1,5 @@
 import { BlockBuilder, BlockElementType } from '@rocket.chat/apps-engine/definition/uikit';
+
 import { IPoll, pollVisibility } from '../definition';
 import { buildVoteGraph } from './buildVoteGraph';
 import { buildVoters } from './buildVoters';
@@ -73,7 +74,7 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
         block.addSectionBlock({
             text: block.newPlainTextObject(option),
             ...!poll.finished && {
-                accessory: {
+                    accessory: {
                     type: BlockElementType.BUTTON,
                     actionId: 'vote',
                     text: block.newPlainTextObject('Vote'),
@@ -111,32 +112,31 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
     // Next Poll Button if live poll
     if (poll.pollIndex !== undefined && poll.totalLivePolls && (poll.pollIndex < poll.totalLivePolls - 1) && poll.activeLivePoll) {
         block
-            .addActionsBlock({
-                elements: [
-                    block.newButtonElement({
-                        actionId: 'nextPoll',
-                        text: block.newPlainTextObject('Next Poll'),
-                    }),
-                ],
-            });
+        .addActionsBlock({
+            elements: [
+                block.newButtonElement({
+                    actionId: 'nextPoll',
+                    text: block.newPlainTextObject('Next Poll'),
+                }),
+            ],
+        });
     }
 
     // Add Option button
     if (!poll.finished && poll.allowAddingOptions) {
         block
-            .addActionsBlock({
-                elements: [
-                    block.newButtonElement({
-                        actionId: 'addUserChoice',
-                        text: block.newPlainTextObject('Add option'),
-                    }),
-                ],
-            });
+        .addActionsBlock({
+            elements: [
+                block.newButtonElement({
+                    actionId: 'addUserChoice',
+                    text: block.newPlainTextObject('Add option'),
+                }),
+            ],
+        });
     }
 
     // Add text block for total votes
     block.addDividerBlock();
-
 
     // Word cloud when Internet access disabled
     if (poll.finished && poll.wordCloud && !wordCloud) {
@@ -152,8 +152,7 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
 
     block.addContextBlock({
         elements: [
-            block.newMarkdownTextObject(`*${poll.totalVotes}* total votes *${getUniqueVoters(poll)}* users voted ${poll.finished ? '| Final Results' : ''}`),
+            block.newMarkdownTextObject(`*${poll.totalVotes}* total votes | *${getUniqueVoters(poll)}* users voted ${poll.finished ? '| Final Results' : ''}`),
         ],
     });
-
 }
