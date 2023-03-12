@@ -17,7 +17,7 @@ function getUniqueVoters(poll: IPoll): number {
 
 export function createPollBlocks(block: BlockBuilder, question: string, options: Array<any>, poll: IPoll, showNames: boolean, timeZone: string, anonymousOptions: Array<string>, wordCloud: boolean) {
     block.addSectionBlock({
-        text: block.newPlainTextObject(question),
+        text: block.newMarkdownTextObject(`_${question}_`),
         ...!poll.finished && {
             accessory: {
                 type: BlockElementType.OVERFLOW_MENU,
@@ -35,7 +35,7 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
     if (poll.activeLivePoll && !poll.finished) {
         block.addContextBlock({
             elements: [
-                block.newMarkdownTextObject(`The poll will finish at ${poll.livePollEndTime}`),
+                block.newMarkdownTextObject(`The poll will finish at *${poll.livePollEndTime}*`),
             ],
         });
     }
@@ -43,7 +43,7 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
     if (poll.finished) {
         block.addContextBlock({
             elements: [
-                block.newMarkdownTextObject(`The poll has been finished at ${new Intl.DateTimeFormat('en-GB', {
+                block.newMarkdownTextObject(`The poll has been finished at *${new Intl.DateTimeFormat('en-GB', {
                     timeZone,
                     weekday: 'long',
                     month: 'long',
@@ -53,12 +53,11 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
                     minute: '2-digit',
                     second: '2-digit',
                     timeZoneName: 'long',
-                }).format(new Date())}`),
+                }).format(new Date())}*`),
             ],
         });
     }
 
-    block.addDividerBlock();
 
     const maxVoteQuantity = Math.max(...poll.votes.map((vote) => vote.quantity));
     // Forms array of option indices with maximum votes (more than 1 option can be max-voted)
@@ -71,6 +70,7 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
             return ind;
         }, []);
     options.forEach((option, index) => {
+        block.addDividerBlock();
         block.addSectionBlock({
             text: block.newPlainTextObject(option),
             ...!poll.finished && {
@@ -145,14 +145,14 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
         }).join(' ');
         block.addContextBlock({
             elements: [
-                block.newMarkdownTextObject(`Poll summary: ${responseSummary}`),
+                block.newMarkdownTextObject(`*Poll summary*: ${responseSummary}`),
             ],
         });
     }
 
     block.addContextBlock({
         elements: [
-            block.newMarkdownTextObject(`*${poll.totalVotes}* total votes | *${getUniqueVoters(poll)}* users voted ${poll.finished ? '| Final Results' : ''}`),
+            block.newMarkdownTextObject(`*${poll.totalVotes}* total votes | *${getUniqueVoters(poll)}* users voted ${poll.finished ? '| *Final Results*' : ''}`),
         ],
     });
 }
