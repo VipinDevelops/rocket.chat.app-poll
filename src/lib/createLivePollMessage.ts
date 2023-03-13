@@ -55,13 +55,14 @@ export async function createLivePollMessage(data: any, read: IRead, modify: IMod
             anonymousOptions,
         };
 
+        const timezone = data.user?.utcOffset | timeZone.value;
         const livePollEndTime = new Date();
         // Convert state.ttv to integer and add it to livePollEndTime
         livePollEndTime.setSeconds(livePollEndTime.getSeconds() + (+state.poll.ttv));
         poll.livePollEndTime = new Intl.DateTimeFormat(
             'en-GB',
             {
-                timeZone: timeZone.value,
+                timeZone: timezone.toString(),
                 weekday: 'long',
                 month: 'long',
                 year: 'numeric',
