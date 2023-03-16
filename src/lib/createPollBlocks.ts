@@ -17,7 +17,7 @@ function getUniqueVoters(poll: IPoll): number {
 
 export function createPollBlocks(block: BlockBuilder, question: string, options: Array<any>, poll: IPoll, showNames: boolean, timeZone: string, anonymousOptions: Array<string>, wordCloud: boolean) {
     block.addSectionBlock({
-        text: block.newMarkdownTextObject(`_${question}_`),
+        text: block.newMarkdownTextObject(`${question}`),
         ...!poll.finished && {
             accessory: {
                 type: BlockElementType.OVERFLOW_MENU,

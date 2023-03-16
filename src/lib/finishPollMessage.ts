@@ -11,7 +11,7 @@ import {
     RocketChatAssociationRecord,
 } from '@rocket.chat/apps-engine/definition/metadata';
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
-
+import timeZones from '../assets/timezones';
 import { IPoll } from '../definition';
 import { createPollBlocks } from './createPollBlocks';
 import { getPoll } from './getPoll';
@@ -78,11 +78,17 @@ export async function finishPollMessage({
             .getEnvironmentReader()
             .getSettings()
             .getById('wordcloud-api');
-        const timeZone = await read
-            .getEnvironmentReader()
-            .getSettings()
-            .getById('timezone');
 
+        const user = await read.getUserReader().getById(data.user.id);
+        const utcOffset = await user.utcOffset;
+        const usertime = await timeZones.timeZones.find(time => time.offset === utcOffset) as any;
+        const timeZone = await read
+        .getEnvironmentReader()
+        .getSettings()
+        .getById('timezone');
+
+        const timezone = usertime ? usertime.utc[0]:timeZone; 
+        
         if (poll.wordCloud && wordCloudAPI.value) {
             let wordList = [] as Array<string>;
             poll.options.map((option, index) => {
@@ -101,7 +107,7 @@ export async function finishPollMessage({
                     poll.options,
                     poll,
                     showNames.value,
-                    timeZone.value,
+                    timezone,
                     poll.anonymousOptions,
                     wordCloudAPI.value,
                 );
@@ -126,7 +132,7 @@ export async function finishPollMessage({
                     poll.options,
                     poll,
                     showNames.value,
-                    timeZone.value,
+                    timezone,
                     poll.anonymousOptions,
                     false,
                 );
@@ -142,7 +148,7 @@ export async function finishPollMessage({
                 poll.options,
                 poll,
                 showNames.value,
-                timeZone.value,
+                timezone,
                 poll.anonymousOptions,
                 wordCloudAPI.value,
             );
