@@ -1,8 +1,8 @@
 import { IPersistence } from '@rocket.chat/apps-engine/definition/accessors';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '@rocket.chat/apps-engine/definition/metadata';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
-
-import { IPoll } from '../definition';
+import {sortVotes} from '../assets/sortVotes';
+import { IPoll, IVoter } from '../definition';
 
 export async function storeVote(poll: IPoll, voteIndex: number, { id, username, name }: IUser, { persis }: { persis: IPersistence }) {
     const association = new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, poll.msgId);
@@ -16,6 +16,7 @@ export async function storeVote(poll: IPoll, voteIndex: number, { id, username, 
 
     const hasVoted = poll.votes[voteIndex].voters.findIndex(findVoter);
 
+
     if (hasVoted !== -1) {
         poll.totalVotes--;
         poll.votes[voteIndex].quantity--;
@@ -25,6 +26,10 @@ export async function storeVote(poll: IPoll, voteIndex: number, { id, username, 
         poll.votes[voteIndex].quantity++;
         poll.votes[voteIndex].voters.push(voter);
     }
+
+    const data = sortVotes(poll);
+    poll.votes = data.votes
+    poll.options = data.options
 
     if (poll.singleChoice && hasVoted === -1 && previousVote !== -1) {
         poll.totalVotes--;
