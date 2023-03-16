@@ -25,6 +25,15 @@ async function finishPoll(poll: IPoll, { persis }: { persis: IPersistence }) {
     return persis.updateByAssociation(association, poll);
 }
 
+async function getuserTimezone(read: IRead, data) {
+    const user = await read.getUserReader().getById(data.user.id);
+    const utcOffset = await user.utcOffset;
+    const usertime = await timeZones.timeZones.find(time => time.offset === utcOffset);
+    const timeZone = await read.getEnvironmentReader().getSettings().getById('timezone');
+    const timezone = usertime ? usertime.utc[0]:timeZone; 
+    return timezone as string;
+}
+
 export async function finishPollMessage({
     data,
     read,
@@ -79,11 +88,8 @@ export async function finishPollMessage({
             .getSettings()
             .getById('wordcloud-api');
 
-        const user = await read.getUserReader().getById(data.user.id);
-        const utcOffset = await user.utcOffset;
-        const usertime = await timeZones.timeZones.find(time => time.offset === utcOffset) as any;
-        const timeZone = await read.getEnvironmentReader().getSettings().getById('timezone');
-        const timezone = usertime ? usertime.utc[0]:timeZone; 
+
+        const timezone = await getuserTimezone(read, data);
         
         if (poll.wordCloud && wordCloudAPI.value) {
             let wordList = [] as Array<string>;
