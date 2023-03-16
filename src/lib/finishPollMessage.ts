@@ -82,11 +82,7 @@ export async function finishPollMessage({
         const user = await read.getUserReader().getById(data.user.id);
         const utcOffset = await user.utcOffset;
         const usertime = await timeZones.timeZones.find(time => time.offset === utcOffset) as any;
-        const timeZone = await read
-        .getEnvironmentReader()
-        .getSettings()
-        .getById('timezone');
-
+        const timeZone = await read.getEnvironmentReader().getSettings().getById('timezone');
         const timezone = usertime ? usertime.utc[0]:timeZone; 
         
         if (poll.wordCloud && wordCloudAPI.value) {
