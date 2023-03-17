@@ -25,10 +25,10 @@ async function finishPoll(poll: IPoll, { persis }: { persis: IPersistence }) {
     return persis.updateByAssociation(association, poll);
 }
 
-async function getuserTimezone(read: IRead, data) {
+async function getuserTimezone(read: IRead, data: { user: { id: string; }; }) {
     const user = await read.getUserReader().getById(data.user.id);
-    const utcOffset = await user.utcOffset;
-    const usertime = await timeZones.timeZones.find(time => time.offset === utcOffset);
+    const utcOffset = user.utcOffset;
+    const usertime = timeZones.timeZones.find(time => time.offset === utcOffset);
     const timeZone = await read.getEnvironmentReader().getSettings().getById('timezone');
     const timezone = usertime ? usertime.utc[0]:timeZone; 
     return timezone as string;
